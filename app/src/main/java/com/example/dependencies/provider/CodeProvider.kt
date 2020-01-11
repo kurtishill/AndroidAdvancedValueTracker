@@ -36,7 +36,7 @@ class CodeProvider @Inject constructor(
             .subscribe({
                 valueSource.accept(it)
             }, { throwable ->
-                print(throwable)
+                Log.d("CodeProvider", throwable.localizedMessage ?: "Error")
             }).addTo(compositeDisposable)
     }
 }
