@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Dependencies</string>
+
+    <string name="number">Code</string>
+    <string name="send">Get Value</string>
+    <string name="update">Update</string>
+    <string name="success">Success</string>
+    <string name="fail">Failure</string>
+</resources>
