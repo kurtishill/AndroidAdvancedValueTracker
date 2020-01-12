@@ -8,6 +8,7 @@ buildscript {
     ext.rxjava2_version = '2.1.1'
     ext.dagger_version = '2.15'
     ext.retrofit_version = '2.6.0'
+    ext.mockito_version = '2.11.0'
     repositories {
         google()
         jcenter()

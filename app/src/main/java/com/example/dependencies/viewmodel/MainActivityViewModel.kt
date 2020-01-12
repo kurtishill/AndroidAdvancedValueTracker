@@ -7,6 +7,7 @@ import com.example.dependencies.injection.Injector
 import com.example.dependencies.provider.CodeProvider
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class MainActivityViewModel : ViewModel() {
@@ -22,18 +23,6 @@ class MainActivityViewModel : ViewModel() {
 
     init {
         Injector.appComponent.inject(this)
-
-        codeProvider.valueSource
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                loading.value = false
-                if (it.success) {
-                    number.value = it.value
-                    success.value = true
-                }
-                else
-                    error.value = it.message
-            }.addTo(compositeDisposable)
     }
 
     fun postNumber(code: Int) {
@@ -41,6 +30,19 @@ class MainActivityViewModel : ViewModel() {
         loading.value = true
         success.value = null
         codeProvider.postNumber(code)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                loading.value = false
+                if (it.success)
+                    number.value = it.value
+                else
+                    error.value = it.message
+            }, {
+                loading.value = false
+                error.value = it.localizedMessage ?: "Error"
+                number.value = null
+            }).addTo(compositeDisposable)
     }
 
     fun updateNumber(code: Int, value: Int) {
@@ -48,5 +50,19 @@ class MainActivityViewModel : ViewModel() {
         loading.value = true
         success.value = null
         codeProvider.updateNumber(code, value)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                loading.value = false
+                if (it.success) {
+                    number.value = it.value
+                    success.value = true
+                } else
+                    error.value = it.message
+            }, {
+                loading.value = false
+                error.value = it.localizedMessage ?: "Error"
+                number.value = null
+            }).addTo(compositeDisposable)
     }
 }
